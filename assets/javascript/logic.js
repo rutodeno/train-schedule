@@ -23,20 +23,17 @@ var database = firebase.database ();
   
 // Global variables
 
-var trainName = "";
-var destination ="";
-var firstTrain = "";
-var trainFreq = "";
+
 
 $(".btn-primary").on("click", function(event){
 
     event.preventDefault();
 
-    trainName =   $("#trainName").val().trim();
-    destination = $("#destination").val().trim();
-    firstTrain =  $("#firstTrain").val().trim();
-    trainFreq =   $("#trainFreq").val().trim();
-
+   var  trainName =   $("#trainName").val().trim();
+   var  destination = $("#destination").val().trim();
+   var  firstTrain =  moment($("#firstTrain").val().trim(), "HH:mm").format("HH:mm");
+   
+   var  trainFreq =   $("#trainFreq").val().trim();
     
 
     var newTrain = {
@@ -95,26 +92,21 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey){
 function trainTime (tFrequency, firstTime) {
 
     var firstTimeConverted = moment(firstTime, "HH:mm").subtract(1,"years");
-    console.log("firstTimeConverted: "+firstTimeConverted.format("hh:mm A"));
     
     var currentTime = moment();
-    console.log("CURRENT TIME: "+currentTime.format("hh:mm A"));
-
+    
     // get the difference between the times
-    var diffTime = currentTime.diff(firstTimeConverted,"minutes");
-    console.log("DIFFERENCE IN TIME: "+diffTime);
-
+    var diffTime = moment().diff(firstTimeConverted,"minutes");
+    
     var tRemainder = diffTime %tFrequency;
-    console.log("remainder: "+tRemainder);
 
     var minutesTillTrain = tFrequency - tRemainder;
 
-    var nextTrain = currentTime.add(minutesTillTrain, "minutes");
-
-    console.log("minutes till next train: "+minutesTillTrain);
-    console.log("nextTrain: "+nextTrain.format("hh:mm A"));
+    var nextTrain = moment().add(minutesTillTrain, "minutes");
 
     return [minutesTillTrain, nextTrain.format("hh:mm A")];
+    
+
 };
 
 
